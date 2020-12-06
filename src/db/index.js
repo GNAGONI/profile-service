@@ -11,6 +11,23 @@ const client = new Pool({
   port: process.env.POSTGRES_PORT,
 });
 
+const dbConnect = (cb) => {
+  (async () => {
+    try {
+      await client.connect();
+      client.on('error', (e) => {
+        console.error(e);
+        process.exit(2);
+      });
+      cb();
+    } catch (e) {
+      console.error(e);
+      process.exit(2);
+    }
+  })();
+};
+
 module.exports = {
   client,
+  dbConnect,
 };

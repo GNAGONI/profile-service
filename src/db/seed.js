@@ -4,7 +4,10 @@ const { client } = require('./index');
 
 const seed = async () => {
   try {
-    const numberOfProfiles = 1000;
+    const profilesId = fs.readFileSync(
+      path.resolve(__dirname, './idData.sql'),
+      'utf8',
+    );
     const seedSQL = fs.readFileSync(
       path.resolve(__dirname, './seed.sql'),
       'utf8',
@@ -16,12 +19,12 @@ const seed = async () => {
 
     await client.connect();
     await client.query(seedSQL);
-    await client.query(`SELECT fill_data(${numberOfProfiles});`);
+    await client.query(`SELECT fill_data(${profilesId});`);
     await client.query(functionsSQL);
-    await client.end();
+    process.exit();
   } catch (err) {
     console.error(err);
-    process.exit();
+    process.exit(2);
   }
 };
 

@@ -11,8 +11,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fill_data(profile_number integer)
+CREATE OR REPLACE FUNCTION fill_data(profiles_id text[])
 	RETURNS void AS $$
+DECLARE
+	profile_id text;
 BEGIN
 
 	CREATE TABLE profiles (
@@ -23,15 +25,17 @@ BEGIN
 	  updated_at timestamp DEFAULT NOW()
 	);
 
-
-	INSERT INTO profiles(id, name, details, created_at, updated_at)
-		SELECT
-			uuid_generate_v4(),
-			'Jack',
-			'{"image": "123.com", "locale": "USA", "gender": "M", "age": "40"}',
-			now(),
-			now()
-		FROM generate_series(1, profile_number) AS s(id);
+	FOREACH profile_id IN ARRAY profiles_id
+		LOOP
+			INSERT INTO profiles(id, name, details, created_at, updated_at)
+			SELECT
+				profile_id::uuid,
+				'Mark',
+				'{"image": "123.com", "locale": "USA", "gender": "M", "age": "40"}',
+				now(),
+				now()
+			FROM generate_series(1, 1) AS s(id);
+		END LOOP;	
 
 END;
 $$ LANGUAGE plpgsql;

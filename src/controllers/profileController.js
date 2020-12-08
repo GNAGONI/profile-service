@@ -1,5 +1,4 @@
-const { validationResult } = require('express-validator');
-const { validationError, dbQueryError } = require('../errors');
+const { dbQueryError } = require('../errors');
 const { client } = require('../db');
 
 const me = async (req, res) => {
@@ -21,10 +20,6 @@ const me = async (req, res) => {
 };
 
 const deleteProfile = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    throw validationError(errors.array());
-  }
   const { id } = req.params;
   const result = await client.query(
     `SELECT * FROM delete_profile_by_id('${id}');`,
@@ -42,7 +37,26 @@ const deleteProfile = async (req, res) => {
   });
 };
 
+const getProfile = async (req, res) => {
+  const { userId } = req.params;
+  const result = await client.query(
+    `SELECT * FROM get_profile_by_id('${userId}');`,
+  );
+  const profile = result.rows[0];
+  if (!profile) {
+    throw dbQueryError('Profile does not exist');
+  }
+  res.send({
+    id: profile.id,
+    name: profile.name,
+    details: profile.details,
+    createdAt: profile.created_at,
+    updatedAt: profile.updated_at,
+  });
+};
+
 module.exports = {
   me,
   deleteProfile,
+  getProfile,
 };

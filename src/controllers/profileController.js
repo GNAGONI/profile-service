@@ -1,11 +1,9 @@
 const { dbQueryError } = require('../errors');
-const { client } = require('../db');
+const { dbQuery } = require('../db');
 
 const me = async (req, res) => {
   const { id } = req.user;
-  const result = await client.query(
-    `SELECT * FROM get_profile_by_id('${id}');`,
-  );
+  const result = await dbQuery(`SELECT * FROM get_profile_by_id('${id}');`);
   const profile = result.rows[0];
   if (!profile) {
     throw dbQueryError('Profile does not exist');
@@ -21,9 +19,7 @@ const me = async (req, res) => {
 
 const deleteProfile = async (req, res) => {
   const { id } = req.params;
-  const result = await client.query(
-    `SELECT * FROM delete_profile_by_id('${id}');`,
-  );
+  const result = await dbQuery(`SELECT * FROM delete_profile_by_id('${id}');`);
   const deletedProfile = result.rows[0];
   if (!deletedProfile) {
     throw dbQueryError('Profile does not exist');
@@ -39,9 +35,7 @@ const deleteProfile = async (req, res) => {
 
 const getProfile = async (req, res) => {
   const { userId } = req.params;
-  const result = await client.query(
-    `SELECT * FROM get_profile_by_id('${userId}');`,
-  );
+  const result = await dbQuery(`SELECT * FROM get_profile_by_id('${userId}');`);
   const profile = result.rows[0];
   if (!profile) {
     throw dbQueryError('Profile does not exist');

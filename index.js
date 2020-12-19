@@ -4,7 +4,6 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const { profileRouter } = require('./src/routes');
 const { errorMiddleware } = require('./src/middlewares');
-const { dbConnect } = require('./src/db');
 
 const app = express();
 dotenv.config();
@@ -17,10 +16,6 @@ app.use((req, res) => {
 });
 app.use(errorMiddleware);
 
-dbConnect(() => {
-  app.listen(process.env.PROFILE_SERVICE_PORT, () => {
-    console.log(
-      `Server is running on port ${process.env.PROFILE_SERVICE_PORT}`,
-    );
-  });
+app.listen(process.env.PROFILE_SERVICE_PORT, () => {
+  console.log(`Server is running on port ${process.env.PROFILE_SERVICE_PORT}`);
 });

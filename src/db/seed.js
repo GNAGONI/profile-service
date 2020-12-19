@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { client } = require('./index');
+const { dbQuery } = require('./index');
 
 const seed = async () => {
   try {
@@ -17,10 +17,9 @@ const seed = async () => {
       'utf8',
     );
 
-    await client.connect();
-    await client.query(seedSQL);
-    await client.query(`SELECT fill_data(${profilesId});`);
-    await client.query(functionsSQL);
+    await dbQuery(seedSQL);
+    await dbQuery(`SELECT fill_data(${profilesId});`);
+    await dbQuery(functionsSQL);
     process.exit();
   } catch (err) {
     console.error(err);

@@ -1,8 +1,7 @@
 const express = require('express');
-const { param } = require('express-validator');
+const { param, body } = require('express-validator');
 const { profileController } = require('../controllers');
-const { authCheckMiddleware } = require('../middlewares');
-const { validationMiddleware } = require('../middlewares');
+const { authCheckMiddleware, validationMiddleware } = require('../middlewares');
 
 const profileRouter = express.Router();
 
@@ -21,5 +20,20 @@ profileRouter.get(
   validationMiddleware,
   profileController.getProfile,
 );
+
+profileRouter.post(
+  '/login',
+  [
+    body('email').isEmail().withMessage('Invalid email'),
+    body('password')
+      .trim()
+      .isLength({ min: 4, max: 10 })
+      .withMessage('Password must be between 4 and 10 symbols'),
+  ],
+  validationMiddleware,
+  profileController.login,
+);
+
+profileRouter.post('/logout', profileController.logout);
 
 module.exports = profileRouter;

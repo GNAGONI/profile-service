@@ -11,7 +11,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fill_data(profiles_id text[])
+CREATE OR REPLACE FUNCTION fill_data(profiles_id text[],  default_password_hash text)
 	RETURNS void AS $$
 DECLARE
 	profile_id text;
@@ -20,6 +20,8 @@ BEGIN
 	CREATE TABLE profiles (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	  name text,
+		email text,
+	  password_hash text,
 	  details json,
 	  created_at timestamp DEFAULT NOW(),
 	  updated_at timestamp DEFAULT NOW()
@@ -27,10 +29,12 @@ BEGIN
 
 	FOREACH profile_id IN ARRAY profiles_id
 		LOOP
-			INSERT INTO profiles(id, name, details, created_at, updated_at)
+			INSERT INTO profiles(id, name, email, password_hash, details, created_at, updated_at)
 			SELECT
 				profile_id::uuid,
 				'Mark',
+				'user' || s || '@testmail.com',
+				default_password_hash,
 				'{"image": "123.com", "locale": "USA", "gender": "M", "age": "40"}',
 				now(),
 				now()

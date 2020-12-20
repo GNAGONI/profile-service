@@ -1,4 +1,7 @@
+const jwt = require('jsonwebtoken');
 const { dbQuery } = require('../db');
+const { dbQueryError } = require('../errors');
+const { passwordUtil } = require('../utils');
 
 const me = async (req, res) => {
   const { id } = req.user;
@@ -39,8 +42,29 @@ const getProfile = async (req, res) => {
   });
 };
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  const result = await dbQuery(
+    `SELECT * FROM get_profile_by_email('${email}');`,
+  );
+  const user = result.rows[0];
+  if (!passwordUtil.compareHash(password, user.password_hash)) {
+    throw dbQueryError('Invalid credentials');
+  }
+  res.send({
+    email: user.email,
+    id: user.id,
+  });
+};
+
+const logout = (req, res) => {
+  res.sendStatus(200);
+};
+
 module.exports = {
   me,
   deleteProfile,
   getProfile,
+  login,
+  logout,
 };

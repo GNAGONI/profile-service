@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { dbQuery } = require('./index');
+const { passwordUtil } = require('../utils');
 
 const seed = async () => {
   try {
@@ -17,8 +18,11 @@ const seed = async () => {
       'utf8',
     );
 
+    const defaultUserTypePassword = '1234';
+    const hash = passwordUtil.convertToHash(defaultUserTypePassword);
+
     await dbQuery(seedSQL);
-    await dbQuery(`SELECT fill_data(${profilesId});`);
+    await dbQuery(`SELECT fill_data(${profilesId}, '${hash}');`);
     await dbQuery(functionsSQL);
     process.exit();
   } catch (err) {

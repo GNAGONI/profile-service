@@ -37,3 +37,26 @@ BEGIN
   	SELECT * FROM dp;
 END;
 $$ LANGUAGE plpgsql;
+
+
+DROP FUNCTION IF EXISTS get_profile_by_email;
+CREATE OR REPLACE FUNCTION get_profile_by_email(profile_email text)
+	RETURNS SETOF profiles AS $$
+DECLARE
+	profile_check BOOLEAN;
+BEGIN
+	 SELECT EXISTS(
+ 		SELECT * FROM profiles
+  	WHERE email = profile_email
+  ) INTO profile_check;
+	
+	IF (profile_check = false) THEN
+ 		RAISE EXCEPTION 'Profile with provided email does not exist'; 
+ 	END IF;
+	
+	RETURN QUERY
+	SELECT * FROM profiles
+	WHERE email = profile_email;
+END;
+$$ LANGUAGE plpgsql;
+

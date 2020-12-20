@@ -23,19 +23,21 @@ BEGIN
 		email text,
 	  password_hash text,
 	  details json,
+		user_type_credentials text,
 	  created_at timestamp DEFAULT NOW(),
 	  updated_at timestamp DEFAULT NOW()
 	);
 
 	FOREACH profile_id IN ARRAY profiles_id
 		LOOP
-			INSERT INTO profiles(id, name, email, password_hash, details, created_at, updated_at)
+			INSERT INTO profiles(id, name, email, password_hash, details, user_type_credentials, created_at, updated_at)
 			SELECT
 				profile_id::uuid,
 				'Mark',
 				'user' || s || '@testmail.com',
 				default_password_hash,
 				'{"image": "123.com", "locale": "USA", "gender": "M", "age": "40"}',
+				'commonUser/1234',
 				now(),
 				now()
 			FROM generate_series(1, 1) AS s(id);

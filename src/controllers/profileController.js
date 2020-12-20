@@ -54,7 +54,9 @@ const login = async (req, res) => {
   req.session.userEmail = user.email;
   req.session.userId = user.id;
   req.session.authenticated = true;
-  res.sendStatus(200);
+  res.send({
+    credentials: user.user_type_credentials,
+  });
 };
 
 const logout = (req, res) => {

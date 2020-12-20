@@ -51,12 +51,10 @@ const login = async (req, res) => {
   if (!passwordUtil.compareHash(password, user.password_hash)) {
     throw dbQueryError('Invalid credentials');
   }
-
   req.session.userEmail = user.email;
   req.session.userId = user.id;
-  res.send({
-    sessionId: req.sessionID,
-  });
+  req.session.authenticated = true;
+  res.sendStatus(200);
 };
 
 const logout = (req, res) => {

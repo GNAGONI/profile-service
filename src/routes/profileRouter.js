@@ -8,14 +8,22 @@ const profileRouter = express.Router();
 profileRouter.get('/me', authCheckMiddleware, profileController.me);
 profileRouter.delete(
   '/:id',
-  [param('id').isUUID().withMessage('Param id should be uuid')],
+  [
+    param('id')
+      .isUUID()
+      .withMessage('Param id should be uuid'),
+  ],
   authCheckMiddleware,
   validationMiddleware,
   profileController.deleteProfile,
 );
 profileRouter.get(
   '/:userId',
-  [param('userId').isUUID().withMessage('Param userId should be uuid')],
+  [
+    param('userId')
+      .isUUID()
+      .withMessage('Param userId should be uuid'),
+  ],
   authCheckMiddleware,
   validationMiddleware,
   profileController.getProfile,
@@ -24,7 +32,9 @@ profileRouter.get(
 profileRouter.post(
   '/login',
   [
-    body('email').isEmail().withMessage('Invalid email'),
+    body('email')
+      .isEmail()
+      .withMessage('Invalid email'),
     body('password')
       .trim()
       .isLength({ min: 4, max: 10 })

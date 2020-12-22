@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
+const { dbQueryError, passwordUtil } = require('@microservices-inc/common');
 const { dbQuery } = require('../db');
-const { dbQueryError } = require('../errors');
-const { passwordUtil } = require('../utils');
 
 const me = async (req, res) => {
   const { id } = req.user;

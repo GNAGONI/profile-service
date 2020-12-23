@@ -9,6 +9,10 @@ const seed = async () => {
       path.resolve(__dirname, './idData.sql'),
       'utf8',
     );
+    const tablesSQL = fs.readFileSync(
+      path.resolve(__dirname, './tables.sql'),
+      'utf8',
+    );
     const seedSQL = fs.readFileSync(
       path.resolve(__dirname, './seed.sql'),
       'utf8',
@@ -21,9 +25,11 @@ const seed = async () => {
     const defaultUserTypePassword = '1234';
     const hash = passwordUtil.convertToHash(defaultUserTypePassword);
 
+    await dbQuery(tablesSQL);
+    await dbQuery(functionsSQL);
     await dbQuery(seedSQL);
     await dbQuery(`SELECT fill_data(${profilesId}, '${hash}');`);
-    await dbQuery(functionsSQL);
+
     process.exit();
   } catch (err) {
     console.error(err);

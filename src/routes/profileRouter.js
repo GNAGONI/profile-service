@@ -1,14 +1,20 @@
 const express = require('express');
 const { param, body } = require('express-validator');
 const {
-  authCheckMiddleware,
   validationMiddleware,
+  scopeCheckMiddleware,
+  authCheckMiddleware,
 } = require('@microservices-inc/common');
 const { profileController } = require('../controllers');
 
 const profileRouter = express.Router();
 
-profileRouter.get('/me', authCheckMiddleware, profileController.me);
+profileRouter.get(
+  '/me',
+  authCheckMiddleware,
+  scopeCheckMiddleware('profile:me:read'),
+  profileController.me,
+);
 profileRouter.delete(
   '/:id',
   [
@@ -17,6 +23,7 @@ profileRouter.delete(
       .withMessage('Param id should be uuid'),
   ],
   authCheckMiddleware,
+  scopeCheckMiddleware('profile:delete'),
   validationMiddleware,
   profileController.deleteProfile,
 );
@@ -28,6 +35,7 @@ profileRouter.get(
       .withMessage('Param userId should be uuid'),
   ],
   authCheckMiddleware,
+  scopeCheckMiddleware('profile:read'),
   validationMiddleware,
   profileController.getProfile,
 );

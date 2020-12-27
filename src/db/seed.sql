@@ -1,5 +1,4 @@
 DROP FUNCTION IF EXISTS fill_data;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE OR REPLACE FUNCTION fill_data(profiles_id text[],  default_password_hash text)
 	RETURNS void AS $$

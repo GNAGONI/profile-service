@@ -62,16 +62,11 @@ const login = async (req, res) => {
 const logout = (req, res) => {
   const { userEmail, userId } = req.session;
   if (userEmail && userId) {
-    const publisher = eventBus.getPublisher('isOnline');
-    if (publisher) {
-      publisher.publish({
-        userEmail,
-        userId,
-        isOnline: false,
-      });
-    } else {
-      console.error('Publisher to event bus is not provided');
-    }
+    eventBus.publish('isOnline', {
+      userEmail,
+      userId,
+      isOnline: false,
+    });
   } else {
     console.error('Invalid session data. Email or id is not provided');
   }

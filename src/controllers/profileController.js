@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { dbQueryError, passwordUtil } = require('@microservices-inc/common');
+const { eventBus } = require('@microservices-inc/common');
 const { dbQuery } = require('../db');
 
 const me = async (req, res) => {
@@ -59,11 +60,22 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
+  const { userEmail, userId } = req.session;
+  if (userEmail && userId) {
+    eventBus.publish('isOnline', {
+      userEmail,
+      userId,
+      isOnline: false,
+    });
+  } else {
+    console.error('Invalid session data. Email or id is not provided');
+  }
   req.session.destroy(err => {
     if (err) {
       console.log(err);
     }
   });
+
   res.sendStatus(200);
 };
 

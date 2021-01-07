@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const { errorMiddleware } = require('@microservices-inc/common');
+const { eventBus } = require('@microservices-inc/common');
 const { profileRouter } = require('./src/routes');
 const { sessionStorage } = require('./src/sessionStorage');
 
@@ -18,6 +19,10 @@ app.use((req, res) => {
 });
 app.use(errorMiddleware);
 
-app.listen(process.env.PROFILE_SERVICE_PORT, () => {
-  console.log(`Server is running on port ${process.env.PROFILE_SERVICE_PORT}`);
+eventBus.connect(process.env.RABBITMQ_URI, () => {
+  app.listen(process.env.PROFILE_SERVICE_PORT, () => {
+    console.log(
+      `Server is running on port ${process.env.PROFILE_SERVICE_PORT}`,
+    );
+  });
 });

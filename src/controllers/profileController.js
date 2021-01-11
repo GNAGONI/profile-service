@@ -53,7 +53,7 @@ const login = async (req, res) => {
   }
   req.session.userEmail = user.email;
   req.session.userId = user.id;
-  req.session.authenticated = true;
+  req.session.sessionId = req.sessionID;
   res.send({
     credentials: user.user_type_credentials,
   });
@@ -66,6 +66,7 @@ const logout = (req, res) => {
       userEmail,
       userId,
       isOnline: false,
+      sessionId: req.session.sessionId,
     });
   } else {
     console.error('Invalid session data. Email or id is not provided');
